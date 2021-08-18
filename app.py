@@ -1,5 +1,5 @@
-from flask import Flask
-from models import db, InitEntity
+from flask import Flask, jsonify
+from models import db, Parent, Child
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///init.db'
@@ -10,7 +10,7 @@ db.create_all()
 
 
 @app.route('/')
-def hello_world():  # put application's code here
+def test():  # put application's code here
     return 'Hello World!'
 
 
@@ -18,7 +18,10 @@ if __name__ == '__main__':
     app.run()
 
 with app.app_context():
-    i = InitEntity(id=2, value="test")
-    db.session.add(i)
+    parent = Parent(value="test parent")
+    child = Child(value="test child")
+    parent.children.append(child)
+    db.session.add(parent)
     db.session.commit()
-    print(InitEntity.query.all())
+    print(Parent.query.all())
+    print(Parent.query.all()[0].children)
